@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:score_counter/widget/counter.dart';
 
 class Field extends StatelessWidget {
   const Field({
@@ -7,10 +6,13 @@ class Field extends StatelessWidget {
     required this.icon,
     required this.text,
     required this.widget,
+    this.onTap,
   });
+
   final Widget widget;
   final Widget? icon;
   final String text;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +37,15 @@ class Field extends StatelessWidget {
                     child: icon,
                   ),
                   const SizedBox(width: 12),
-                  Text(
-                    text,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
+                  GestureDetector(
+                    onTap: onTap,
+                    child: Text(
+                      text,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ],

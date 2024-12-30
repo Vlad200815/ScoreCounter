@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:score_counter/screens/home_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:score_counter/features/home/view/home_screen.dart';
 import 'package:score_counter/theme/theme.dart';
+
+import 'features/blocs/cubit/update_is_inst_cubit.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +19,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: lightTheme,
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: BlocProvider(
+        create: (context) => UpdateIsInstCubit(),
+        child: HomeScreen(),
+      ),
     );
   }
 }
