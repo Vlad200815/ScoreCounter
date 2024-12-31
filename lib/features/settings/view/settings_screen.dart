@@ -70,6 +70,20 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          "Match settings",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 25,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                    ),
                     Field(
                       text: "Points to win",
                       icon: Icon(
@@ -123,6 +137,7 @@ class SettingsScreen extends StatelessWidget {
                       height: 1,
                     ),
                     Field(
+                      onTap: () {},
                       text: "Timer",
                       icon: Icon(
                         Icons.timer,

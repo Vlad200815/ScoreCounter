@@ -50,6 +50,7 @@ class Field extends StatelessWidget {
                   ],
                 ),
               ),
+              widget,
             ],
           ),
         ),
