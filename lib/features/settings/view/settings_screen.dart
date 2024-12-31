@@ -1,13 +1,48 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:score_counter/features/blocs/cubit/update_bool_cubit.dart';
-import 'package:score_counter/features/settings/widgets/my_bottom_sheet_bar.dart';
+import 'package:score_counter/features/settings/widgets/my_bottom_sheet_bar_appearance.dart';
+import 'package:score_counter/features/settings/widgets/my_timer_bottom_bar.dart';
 import '../../home/home.dart';
 import '../widgets/widgets.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  String selectedTime = "00:00";
+
+  void showTimerBottomSheet() async {
+    final result = await showModalBottomSheet(
+      context: context,
+      builder: (context) => MyTimerBottomBar(),
+    );
+
+    // If the user selects a time, update the state
+    if (result != null && mounted) {
+      if (result["min"] < 10 && result["sec"] < 10) {
+        setState(() {
+          selectedTime = "0${result['min']} : 0${result['sec']}";
+        });
+      } else if (result["min"] < 10 && result["sec"] >= 10) {
+        setState(() {
+          selectedTime = "0${result['min']} : ${result['sec']}";
+        });
+      } else if (result["min"] >= 10 && result["sec"] < 10) {
+        setState(() {
+          selectedTime = "${result['min']} : 0${result['sec']}";
+        });
+      } else {
+        setState(() {
+          selectedTime = "${result['min']} : ${result['sec']}";
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +172,7 @@ class SettingsScreen extends StatelessWidget {
                       height: 1,
                     ),
                     Field(
-                      onTap: () {},
+                      // onTap: () {},
                       text: "Timer",
                       icon: Icon(
                         Icons.timer,
@@ -155,12 +190,15 @@ class SettingsScreen extends StatelessWidget {
                           ),
                         ),
                         child: Center(
-                          child: Text(
-                            "10 : 02",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
+                          child: InkWell(
+                            onTap: showTimerBottomSheet,
+                            child: Text(
+                              selectedTime,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
                           ),
                         ),
@@ -368,7 +406,7 @@ class SettingsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    MyBottomSheetBar(
+                    MyBottomSheetBarAppearance(
                       child: Field(
                         text: "Preset colors",
                         icon: Icon(

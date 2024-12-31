@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'widgets.dart';
 
-class MyBottomSheetBar extends StatefulWidget {
-  const MyBottomSheetBar({
+class MyBottomSheetBarAppearance extends StatefulWidget {
+  const MyBottomSheetBarAppearance({
     super.key,
     required this.child,
   });
 
   final Widget child;
   @override
-  State<MyBottomSheetBar> createState() => _MyBottomSheetBarState();
+  State<MyBottomSheetBarAppearance> createState() => _MyBottomSheetBarState();
 }
 
-class _MyBottomSheetBarState extends State<MyBottomSheetBar> {
+class _MyBottomSheetBarState extends State<MyBottomSheetBarAppearance> {
   int chooseIndex = 0;
 
   @override
@@ -29,11 +29,6 @@ class _MyBottomSheetBarState extends State<MyBottomSheetBar> {
       onTap: () async {
         int? selectedIndex = await showModalBottomSheet<int>(
           isScrollControlled: true,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(20),
-            ),
-          ),
           context: context,
           builder: (context) {
             int tempIndex = chooseIndex;
@@ -144,7 +139,7 @@ class _MyBottomSheetBarState extends State<MyBottomSheetBar> {
           setState(() {
             chooseIndex = selectedIndex;
           });
-          print("Selected Index ==== $selectedIndex");
+          print(">>>>>>>>>>>>>>>>>>>Selected Index ==== $selectedIndex");
         }
       },
       child: widget.child,

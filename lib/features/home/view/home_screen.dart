@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:score_counter/features/blocs/cubit/update_bool_cubit.dart';
-import 'package:score_counter/features/home/widgets/instruction.dart';
+import '../widgets/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -262,12 +262,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              // BackdropFilter(
-              //   filter: ImageFilter.blur(
-              //     sigmaX: 3,
-              //     sigmaY: 3,
-              //   ),
-
               state == true ? Instruction() : Container(),
             ],
           );
