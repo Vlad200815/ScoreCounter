@@ -8,7 +8,6 @@ class MyBottomSheetBar extends StatefulWidget {
   });
 
   final Widget child;
-
   @override
   State<MyBottomSheetBar> createState() => _MyBottomSheetBarState();
 }
@@ -148,18 +147,7 @@ class _MyBottomSheetBarState extends State<MyBottomSheetBar> {
           print("Selected Index ==== $selectedIndex");
         }
       },
-      child: Field(
-        onTap: () {
-          //TODO: navigator to appearences
-        },
-        text: "Preset colors",
-        icon: Icon(
-          Icons.palette,
-          size: 25,
-          color: Colors.black,
-        ),
-        widget: Container(),
-      ),
+      child: widget.child,
     );
   }
 }
