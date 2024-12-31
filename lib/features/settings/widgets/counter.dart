@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
-class Counter extends StatelessWidget {
+class Counter extends StatefulWidget {
   const Counter({super.key});
 
+  @override
+  State<Counter> createState() => _CounterState();
+}
+
+class _CounterState extends State<Counter> {
+  int counter = 1;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -11,25 +17,31 @@ class Counter extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              //TODO: decreace the counter by 1
+              if (counter < 2) {
+                return;
+              } else {
+                setState(() {
+                  counter--;
+                });
+              }
             },
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(
-                  color: Colors.grey,
+                  color: counter == 1 ? Colors.grey.shade300 : Colors.grey,
                 ),
               ),
               child: Icon(
                 Icons.remove,
-                color: Colors.grey,
+                color: counter == 1 ? Colors.grey[300] : Colors.grey,
                 size: 25,
               ),
             ),
           ),
           const SizedBox(width: 12),
           Text(
-            "1",
+            counter.toString(),
             style: TextStyle(
               color: Colors.black,
               fontSize: 20,
@@ -39,7 +51,9 @@ class Counter extends StatelessWidget {
           const SizedBox(width: 12),
           InkWell(
             onTap: () {
-              //TODO: increace the counter
+              setState(() {
+                counter++;
+              });
             },
             child: Container(
               decoration: BoxDecoration(

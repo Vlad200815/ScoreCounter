@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:score_counter/features/blocs/cubit/update_bool_cubit.dart';
@@ -14,8 +15,21 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int counter1 = 0;
   int counter2 = 0;
+
+  int firstPlayerWonRounds = 0;
+  int secondPlayerWonRounds = 0;
+
   Offset? _startVerticalDragDetails;
-  bool test = false;
+  //TODO: Victory logic with confetti and crown which is turned on 45 degrees
+  // final _confettiController = ConfettiController();
+  // bool isVictory = false;
+  // // bool test = false;
+
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   _confettiController.dispose();
+  // }
 
   void increaceCounters(int counterIndex) {
     if (counterIndex == 1) {
@@ -188,12 +202,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Expanded(
                             child: Center(
-                              child: Text(
-                                "0",
-                                style: TextStyle(
-                                  color: Colors.lightBlue,
-                                  fontSize: 45,
-                                  fontWeight: FontWeight.w900,
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    firstPlayerWonRounds++;
+                                  });
+                                },
+                                child: Text(
+                                  firstPlayerWonRounds.toString(),
+                                  style: TextStyle(
+                                    color: Colors.lightBlue,
+                                    fontSize: 45,
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
                               ),
                             ),
@@ -204,12 +225,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           Expanded(
                             child: Center(
-                              child: Text(
-                                "0",
-                                style: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontSize: 45,
-                                  fontWeight: FontWeight.w900,
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    secondPlayerWonRounds++;
+                                  });
+                                },
+                                child: Text(
+                                  secondPlayerWonRounds.toString(),
+                                  style: TextStyle(
+                                    color: Colors.redAccent,
+                                    fontSize: 45,
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
                               ),
                             ),
@@ -250,7 +278,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           const SizedBox(width: 3),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                counter1 = 0;
+                                counter2 = 0;
+                              });
+                            },
                             icon: Icon(
                               Icons.refresh_rounded,
                               size: 40,
@@ -260,6 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+                  // ConfettiWidget(confettiController: _confettiController),
                 ],
               ),
               state == true ? Instruction() : Container(),

@@ -7,10 +7,12 @@ import 'package:score_counter/theme/theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(BlocProvider(
-    create: (context) => UpdateBoolCubit(),
-    child: const MyApp(),
-  ));
+  runApp(
+    BlocProvider(
+      create: (context) => UpdateBoolCubit(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

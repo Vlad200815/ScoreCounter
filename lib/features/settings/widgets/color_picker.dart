@@ -1,25 +1,31 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class ColorPickerWidget extends StatefulWidget {
-  const ColorPickerWidget({super.key});
+  const ColorPickerWidget({
+    super.key,
+    required this.startColor,
+  });
+
+  final Color startColor;
 
   @override
   State<ColorPickerWidget> createState() => _ColorPickerWidgetState();
 }
 
 class _ColorPickerWidgetState extends State<ColorPickerWidget> {
+  late Color _currentColor;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentColor = widget.startColor;
+  }
+
   @override
   Widget build(BuildContext context) {
-    Color _currentColor = Colors.blue; // Default color
-
-    // Function to change color
-    void _changeColor(Color color) {
-      setState(() {
-        _currentColor = color;
-      });
-    }
-
     return MaterialButton(
       onPressed: () {
         showDialog(
@@ -30,7 +36,13 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
               content: SingleChildScrollView(
                 child: ColorPicker(
                   pickerColor: _currentColor,
-                  onColorChanged: _changeColor,
+                  onColorChanged: (value) {
+                    setState(() {
+                      _currentColor = value;
+                      log("the color is changed");
+                      log(_currentColor.toString());
+                    });
+                  },
                   pickerAreaHeightPercent: 0.8,
                 ),
               ),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:score_counter/features/blocs/cubit/update_bool_cubit.dart';
 import 'package:score_counter/features/settings/widgets/my_bottom_sheet_bar_appearance.dart';
 import 'package:score_counter/features/settings/widgets/my_timer_bottom_bar.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../home/home.dart';
 import '../widgets/widgets.dart';
 
@@ -15,6 +16,9 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String selectedTime = "00:00";
+
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController secondNameController = TextEditingController();
 
   void showTimerBottomSheet() async {
     final result = await showModalBottomSheet(
@@ -243,6 +247,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         width: 70,
                         height: 60,
                         child: TextField(
+                          controller: firstNameController,
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -263,7 +268,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         size: 25,
                         color: Colors.black,
                       ),
-                      widget: ColorPickerWidget(),
+                      widget: ColorPickerWidget(
+                        startColor: Colors.red,
+                      ),
                     ),
                     Divider(
                       color: Colors.grey[300],
@@ -272,7 +279,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Field(
                       text: "Points",
                       icon: Icon(
-                        Icons.bed,
+                        Icons.emoji_events,
                         size: 25,
                         color: Colors.black,
                       ),
@@ -282,15 +289,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       color: Colors.grey[300],
                       height: 1,
                     ),
-                    Field(
-                      text: "Rounds",
-                      icon: Icon(
-                        Icons.emoji_events,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: Counter(),
-                    ),
+                    // Field(
+                    //   text: "Rounds",
+                    //   icon: Icon(
+                    //     Icons.emoji_events,
+                    //     size: 25,
+                    //     color: Colors.black,
+                    //   ),
+                    //   widget: Counter(),
+                    // ),
                   ],
                 ),
               ),
@@ -330,6 +337,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         width: 70,
                         height: 60,
                         child: TextField(
+                          controller: secondNameController,
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -350,7 +358,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         size: 25,
                         color: Colors.black,
                       ),
-                      widget: ColorPickerWidget(),
+                      widget: ColorPickerWidget(
+                        startColor: Colors.blue,
+                      ),
                     ),
                     Divider(
                       color: Colors.grey[300],
@@ -359,7 +369,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Field(
                       text: "Points",
                       icon: Icon(
-                        Icons.bed,
+                        Icons.emoji_events,
                         size: 25,
                         color: Colors.black,
                       ),
@@ -369,15 +379,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       color: Colors.grey[300],
                       height: 1,
                     ),
-                    Field(
-                      text: "Rounds",
-                      icon: Icon(
-                        Icons.emoji_events,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: Counter(),
-                    ),
+                    // Field(
+                    //   text: "Rounds",
+                    //   icon: Icon(
+                    //     Icons.emoji_events,
+                    //     size: 25,
+                    //     color: Colors.black,
+                    //   ),
+                    //   widget: Counter(),
+                    // ),
                   ],
                 ),
               ),
@@ -476,6 +486,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       height: 1,
                     ),
                     Field(
+                      onTap: () {
+                        const String appLink =
+                            "https://web.telegram.org/k/#@flutternood";
+                        Share.share("Check out this amazing app: $appLink");
+                      },
                       text: "Share app",
                       icon: Icon(
                         Icons.share,
