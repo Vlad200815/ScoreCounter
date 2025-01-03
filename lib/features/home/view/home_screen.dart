@@ -270,18 +270,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Positioned(
                         left: MediaQuery.of(context).size.width - 70,
-                        top: 40,
-                        child: Transform.rotate(
-                          angle: 90 * 3.14159265359 / 180,
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(context, "/settings");
-                            },
-                            child: Image.asset(
-                              "assets/setting.png",
-                              color: Colors.white,
-                              scale: 12,
-                            ),
+                        top: 45,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, "/settings");
+                          },
+                          child: Image.asset(
+                            "assets/settings.webp",
+                            color: Colors.white,
+                            scale: 9,
                           ),
                         ),
                       ),
