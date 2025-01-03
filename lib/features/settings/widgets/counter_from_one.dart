@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-class Counter extends StatefulWidget {
-  const Counter({super.key});
+class CounterFromOne extends StatefulWidget {
+  const CounterFromOne({super.key});
 
   @override
-  State<Counter> createState() => _CounterState();
+  State<CounterFromOne> createState() => _CounterFromOneState();
 }
 
-class _CounterState extends State<Counter> {
+class _CounterFromOneState extends State<CounterFromOne> {
   int counter = 1;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -40,12 +41,16 @@ class _CounterState extends State<Counter> {
             ),
           ),
           const SizedBox(width: 12),
-          Text(
-            counter.toString(),
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.w900,
+          SizedBox(
+            height: 30,
+            width: 10,
+            child: Text(
+              counter.toString(),
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
           const SizedBox(width: 12),

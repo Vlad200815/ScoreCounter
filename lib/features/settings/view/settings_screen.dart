@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:score_counter/features/blocs/update_bool_cubit/update_bool_cubit.dart';
-import 'package:score_counter/features/settings/widgets/my_bottom_sheet_bar_appearance.dart';
-import 'package:score_counter/features/settings/widgets/my_timer_bottom_bar.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../home/home.dart';
 import '../widgets/widgets.dart';
@@ -130,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         size: 25,
                         color: Colors.black,
                       ),
-                      widget: Counter(),
+                      widget: CounterFromOne(),
                     ),
                     Divider(
                       color: Colors.grey[300],
@@ -143,7 +141,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         size: 25,
                         color: Colors.black,
                       ),
-                      widget: Counter(),
+                      widget: CounterFromOne(),
                     ),
                     Divider(
                       color: Colors.grey[300],
@@ -156,7 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         size: 25,
                         color: Colors.black,
                       ),
-                      widget: Counter(),
+                      widget: CounterFromZero(),
                     ),
                     Divider(
                       color: Colors.grey[300],
@@ -169,7 +167,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         size: 25,
                         color: Colors.black,
                       ),
-                      widget: Counter(),
+                      widget: CounterFromOne(),
                     ),
                     Divider(
                       color: Colors.grey[300],
@@ -283,7 +281,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         size: 25,
                         color: Colors.black,
                       ),
-                      widget: Counter(),
+                      widget: CounterFromZero(),
                     ),
                     Divider(
                       color: Colors.grey[300],
@@ -373,21 +371,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         size: 25,
                         color: Colors.black,
                       ),
-                      widget: Counter(),
+                      widget: CounterFromOne(),
                     ),
                     Divider(
                       color: Colors.grey[300],
                       height: 1,
                     ),
-                    // Field(
-                    //   text: "Rounds",
-                    //   icon: Icon(
-                    //     Icons.emoji_events,
-                    //     size: 25,
-                    //     color: Colors.black,
-                    //   ),
-                    //   widget: Counter(),
-                    // ),
                   ],
                 ),
               ),
