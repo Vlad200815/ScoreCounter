@@ -25,9 +25,12 @@ class SettingsCubit extends Cubit<SettingsState> {
           team2Name: "Team 2",
           team2Color: Colors.lightBlue,
           team2Points: 0,
-          //Appearance
-          appearance: 0,
         ));
+
+  //Is save every setting or not
+  void updateIsSave(bool newIsSave) {
+    emit(state.copyWith(isSave: newIsSave));
+  }
 
   //Match settins
   void incrementPointsToWin() {
@@ -142,8 +145,22 @@ class SettingsCubit extends Cubit<SettingsState> {
     }
   }
 
-  //Is save every setting or not
-  void updateIsSave(bool newIsSave) {
-    emit(state.copyWith(isSave: newIsSave));
+  //Reset all the settings to the basic
+  void resetAllSettings() {
+    emit(
+      state.copyWith(
+        pointsToWin: 1,
+        pointsToWinMargin: 1,
+        roundsToWin: 0,
+        incrementPerTap: 1,
+        timer: "00:00",
+        team1Color: Colors.lightBlue,
+        team2Color: Colors.redAccent,
+        team1Name: "Team 1",
+        team2Name: "Team 2",
+        team1Points: 0,
+        team2Points: 0,
+      ),
+    );
   }
 }

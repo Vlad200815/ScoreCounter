@@ -469,6 +469,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         Field(
                           onTap: () {
+                            cubit.resetAllSettings();
+                          },
+                          text: "Reset all settings",
+                          icon: Icon(
+                            Icons.restore_page_outlined,
+                            size: 25,
+                            color: Colors.black,
+                          ),
+                          widget: Container(),
+                        ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
+                        ),
+                        Field(
+                          onTap: () {
                             context.read<UpdateBoolCubit>().updateBool(true);
                             Navigator.pop(context);
                           },

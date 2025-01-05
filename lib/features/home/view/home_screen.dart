@@ -15,14 +15,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int counter1 = 0;
-  int counter2 = 0;
+  // int counter1 = 0;
+  // int counter2 = 0;
 
   int firstPlayerWonRounds = 0;
   int secondPlayerWonRounds = 0;
 
-  String firstTeamName = "Basa";
-  String secondTeamName = "Pety";
+  String firstTeamName = "Team 1";
+  String secondTeamName = "Team 2";
 
   Offset? _startVerticalDragDetails;
 
@@ -48,27 +48,33 @@ class _HomeScreenState extends State<HomeScreen> {
     _confettiController2.dispose();
   }
 
-  void increaceCounters(int counterIndex) {
+  void increaceCounters(int counterIndex, BuildContext context) {
+    final cubit = context.read<SettingsCubit>();
     if (counterIndex == 1) {
-      setState(() {
-        counter1++;
-      });
+      // setState(() {
+      //   counter1++;
+      // });
+      cubit.incrementTeam1Points();
     } else {
-      setState(() {
-        counter2++;
-      });
+      cubit.incrementTeam2Points();
+      // setState(() {
+      //   counter2++;
+      // });
     }
   }
 
-  void decreaceCounters(int counterIndex) {
+  void decreaceCounters(int counterIndex, BuildContext context) {
+    final cubit = context.read<SettingsCubit>();
     if (counterIndex == 1) {
-      setState(() {
-        counter1--;
-      });
+      cubit.decrementTeam1Points();
+      // setState(() {
+      //   counter1--;
+      // });
     } else {
-      setState(() {
-        counter2--;
-      });
+      cubit.decrementTeam2Points();
+      // setState(() {
+      //   counter2--;
+      // });
     }
   }
 
@@ -95,7 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> isVictoryOrNo() async {
-    if (counter1 > counter2) {
+    final cubit = context.read<SettingsCubit>();
+    if (cubit.state.team1Points > cubit.state.team2Points) {
       setState(() {
         isFirstPlayerVictory = true;
       });
@@ -103,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _startFirstConfetti();
       await _triggerDelayActionOfFirstPlayer();
       log("$isFirstPlayerVictory must be false");
-    } else if (counter2 > counter1) {
+    } else if (cubit.state.team2Points > cubit.state.team1Points) {
       setState(() {
         isSecondPlayerVictory = true;
       });
@@ -180,16 +187,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                       details.velocity.pixelsPerSecond.dy;
 
                                   if (verticalDistance > 0) {
-                                    decreaceCounters(1);
+                                    decreaceCounters(1, context);
                                   } else {
-                                    increaceCounters(1);
+                                    increaceCounters(1, context);
                                   }
                                 }
                                 //TODO: imporove victory logic here
                                 await isVictoryOrNo();
                               },
                               child: Container(
-                                color: Colors.lightBlue,
+                                //TODO: think how to fix the thing with this red colour
+                                color: cubit.state.isSave == true
+                                    ? cubit.state.team1Color
+                                    : Colors.redAccent,
                                 child: Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -197,7 +207,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        firstTeamName,
+                                        cubit.state.isSave == true
+                                            ? cubit.state.team1Name
+                                            : firstTeamName,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 50,
@@ -206,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       const SizedBox(height: 20),
                                       Text(
-                                        counter1.toString(),
+                                        cubit.state.team1Points.toString(),
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 150,
@@ -234,16 +246,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                   final double verticalDistance =
                                       details.velocity.pixelsPerSecond.dy;
                                   if (verticalDistance > 0) {
-                                    decreaceCounters(2);
+                                    decreaceCounters(2, context);
                                   } else {
-                                    increaceCounters(2);
+                                    increaceCounters(2, context);
                                   }
                                 }
                                 //TODO: imporove victory logic here
                                 await isVictoryOrNo();
                               },
                               child: Container(
-                                color: Colors.redAccent,
+                                //TODO: the same thing with color which is located a bit higher
+                                color: cubit.state.isSave == true
+                                    ? cubit.state.team2Color
+                                    : Colors.lightBlue,
                                 child: Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -251,7 +266,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        secondTeamName,
+                                        cubit.state.isSave == true
+                                            ? cubit.state.team2Name
+                                            : secondTeamName,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 50,
@@ -260,7 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       const SizedBox(height: 20),
                                       Text(
-                                        counter2.toString(),
+                                        cubit.state.team2Points.toString(),
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 150,
@@ -387,8 +404,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               IconButton(
                                 onPressed: () {
                                   setState(() {
-                                    counter1 = 0;
-                                    counter2 = 0;
+                                    // counter1 = 0;
+                                    // counter2 = 0;
                                     firstPlayerWonRounds = 0;
                                     secondPlayerWonRounds = 0;
                                   });

@@ -18,8 +18,6 @@ final class SettingsState extends Equatable {
     required this.team2Name,
     required this.team2Color,
     required this.team2Points,
-    //Appearance
-    required this.appearance,
   });
 
   //isSave
@@ -38,8 +36,6 @@ final class SettingsState extends Equatable {
   final String team2Name;
   final Color team2Color;
   final int team2Points;
-  //Appearance
-  final int appearance;
 
   SettingsState copyWith({
     //isSave
@@ -58,8 +54,6 @@ final class SettingsState extends Equatable {
     String? team2Name,
     Color? team2Color,
     int? team2Points,
-    //Appearance
-    int? appearance,
   }) {
     return SettingsState(
       //isSave
@@ -78,8 +72,6 @@ final class SettingsState extends Equatable {
       team2Name: team2Name ?? this.team2Name,
       team2Color: team2Color ?? this.team2Color,
       team2Points: team2Points ?? this.team2Points,
-      //Appearance
-      appearance: appearance ?? this.appearance,
     );
   }
 
@@ -87,7 +79,6 @@ final class SettingsState extends Equatable {
   List<Object> get props => [
         //isSave
         isSave,
-
         //Match settings
         pointsToWin,
         pointsToWinMargin,
@@ -102,7 +93,5 @@ final class SettingsState extends Equatable {
         team2Name,
         team2Color,
         team2Points,
-        //Appearance
-        appearance,
       ];
 }

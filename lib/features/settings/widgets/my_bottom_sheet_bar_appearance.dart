@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:score_counter/features/blocs/settings_cubit/settings_cubit.dart';
 import 'widgets.dart';
 
 class MyBottomSheetBarAppearance extends StatefulWidget {
@@ -17,7 +19,7 @@ class _MyBottomSheetBarState extends State<MyBottomSheetBarAppearance> {
 
   @override
   Widget build(BuildContext context) {
-    // final cubit = context.read<SettingsCubit>();
+    final cubit = context.read<SettingsCubit>();
     List<List<Color>> colors = [
       [Colors.lightBlue, Colors.redAccent],
       [Colors.cyan, Colors.greenAccent],
@@ -138,6 +140,8 @@ class _MyBottomSheetBarState extends State<MyBottomSheetBarAppearance> {
           },
         );
         if (selectedIndex != null) {
+          cubit.updateTeamColor(colors[selectedIndex][0], 1);
+          cubit.updateTeamColor(colors[selectedIndex][1], 2);
           print(">>>>>>>>>>>>>>>>>>>Selected Index ==== $selectedIndex");
         }
       },
