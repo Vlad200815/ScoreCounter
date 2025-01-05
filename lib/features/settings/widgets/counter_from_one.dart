@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 
 class CounterFromOne extends StatefulWidget {
-  const CounterFromOne({super.key});
+  const CounterFromOne({
+    super.key,
+    required this.onIncrementTap,
+    required this.onDecrementTap,
+    required this.counter,
+  });
+
+  final void Function() onIncrementTap;
+  final void Function() onDecrementTap;
+  final int counter;
 
   @override
   State<CounterFromOne> createState() => _CounterFromOneState();
 }
 
 class _CounterFromOneState extends State<CounterFromOne> {
-  int counter = 1;
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -17,35 +24,33 @@ class _CounterFromOneState extends State<CounterFromOne> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           InkWell(
-            onTap: () {
-              if (counter < 2) {
-                return;
-              } else {
-                setState(() {
-                  counter--;
-                });
-              }
-            },
+            onTap: widget.onDecrementTap,
+            // if (counter < 2) {
+            //     return;
+            //   } else {
+            //     setState(() {
+            //       counter--;
+            //     });
+            //   }
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(
-                  color: counter == 1 ? Colors.grey.shade300 : Colors.grey,
+                  color:
+                      widget.counter == 1 ? Colors.grey.shade300 : Colors.grey,
                 ),
               ),
               child: Icon(
                 Icons.remove,
-                color: counter == 1 ? Colors.grey[300] : Colors.grey,
+                color: widget.counter == 1 ? Colors.grey[300] : Colors.grey,
                 size: 25,
               ),
             ),
           ),
           const SizedBox(width: 12),
-          SizedBox(
-            height: 30,
-            width: 10,
+          Center(
             child: Text(
-              counter.toString(),
+              widget.counter.toString(),
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 20,
@@ -55,11 +60,7 @@ class _CounterFromOneState extends State<CounterFromOne> {
           ),
           const SizedBox(width: 12),
           InkWell(
-            onTap: () {
-              setState(() {
-                counter++;
-              });
-            },
+            onTap: widget.onIncrementTap,
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),

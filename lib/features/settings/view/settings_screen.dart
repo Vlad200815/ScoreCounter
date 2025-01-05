@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:score_counter/features/blocs/settings_cubit/settings_cubit.dart';
 import 'package:score_counter/features/blocs/update_bool_cubit/update_bool_cubit.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../home/home.dart';
@@ -13,487 +16,509 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String selectedTime = "00:00";
-
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController secondNameController = TextEditingController();
-
-  void showTimerBottomSheet() async {
-    final result = await showModalBottomSheet(
-      context: context,
-      builder: (context) => MyTimerBottomBar(),
-    );
-
-    // If the user selects a time, update the state
-    if (result != null && mounted) {
-      if (result["min"] < 10 && result["sec"] < 10) {
-        setState(() {
-          selectedTime = "0${result['min']} : 0${result['sec']}";
-        });
-      } else if (result["min"] < 10 && result["sec"] >= 10) {
-        setState(() {
-          selectedTime = "0${result['min']} : ${result['sec']}";
-        });
-      } else if (result["min"] >= 10 && result["sec"] < 10) {
-        setState(() {
-          selectedTime = "${result['min']} : 0${result['sec']}";
-        });
-      } else {
-        setState(() {
-          selectedTime = "${result['min']} : ${result['sec']}";
-        });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<SettingsCubit>();
+    TextEditingController firstNameController = TextEditingController();
+    TextEditingController secondNameController = TextEditingController();
+
     return Scaffold(
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     log(cubit.state.isSave.toString());
+      //   },
+      //   backgroundColor: cubit.state.team1Color,
+      //   child: Icon(
+      //     Icons.question_mark_rounded,
+      //   ),
+      // ),
       backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 15),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      "Cancel",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      "Save",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
+        child: BlocBuilder<SettingsCubit, SettingsState>(
+          builder: (context, state) {
+            return Column(
+              children: [
+                const SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomeScreen(),
+                            ),
+                          );
+                        },
                         child: Text(
-                          "Match settings",
+                          "Cancel",
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 25,
-                            fontWeight: FontWeight.w900,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
-                    ),
-                    Field(
-                      text: "Points to win",
-                      icon: Icon(
-                        Icons.local_police_rounded,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: CounterFromOne(),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                    Field(
-                      text: "Points to win margin",
-                      icon: Icon(
-                        Icons.bed_rounded,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: CounterFromOne(),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                    Field(
-                      text: "Rounds to win",
-                      icon: Icon(
-                        Icons.emoji_events,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: CounterFromZero(),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                    Field(
-                      text: "Increment point  per tap",
-                      icon: Icon(
-                        Icons.add_circle,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: CounterFromOne(),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                    Field(
-                      // onTap: () {},
-                      text: "Timer",
-                      icon: Icon(
-                        Icons.timer,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: Container(
-                        width: 90,
-                        height: 35,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: Colors.grey.shade400,
-                            width: 0.8,
+                      InkWell(
+                        onTap: () {
+                          cubit.updateIsSave(true);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomeScreen(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          "Save",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        child: Center(
-                          child: InkWell(
-                            onTap: showTimerBottomSheet,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
                             child: Text(
-                              selectedTime,
+                              "Match settings",
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 18,
+                                fontSize: 25,
                                 fontWeight: FontWeight.w900,
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          "Team 1",
-                          style: TextStyle(
+                        Field(
+                          text: "Points to win",
+                          icon: Icon(
+                            Icons.local_police_rounded,
+                            size: 25,
                             color: Colors.black,
-                            fontSize: 25,
-                            fontWeight: FontWeight.w900,
+                          ),
+                          widget: CounterFromOne(
+                            onIncrementTap: cubit.incrementPointsToWin,
+                            onDecrementTap: cubit.decrementPointsToWin,
+                            counter: state.pointsToWin,
                           ),
                         ),
-                      ),
-                    ),
-                    Field(
-                      text: "Name",
-                      icon: Icon(
-                        Icons.edit,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: SizedBox(
-                        width: 70,
-                        height: 60,
-                        child: TextField(
-                          controller: firstNameController,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            hintText: "Team 1",
-                          ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
                         ),
-                      ),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                    Field(
-                      text: "Color",
-                      icon: Icon(
-                        Icons.palette,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: ColorPickerWidget(
-                        startColor: Colors.red,
-                      ),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                    Field(
-                      text: "Points",
-                      icon: Icon(
-                        Icons.emoji_events,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: CounterFromZero(),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                    // Field(
-                    //   text: "Rounds",
-                    //   icon: Icon(
-                    //     Icons.emoji_events,
-                    //     size: 25,
-                    //     color: Colors.black,
-                    //   ),
-                    //   widget: Counter(),
-                    // ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          "Team 2",
-                          style: TextStyle(
+                        Field(
+                          text: "Points to win margin",
+                          icon: Icon(
+                            Icons.bed_rounded,
+                            size: 25,
                             color: Colors.black,
-                            fontSize: 25,
-                            fontWeight: FontWeight.w900,
+                          ),
+                          widget: CounterFromOne(
+                            onIncrementTap: cubit.incrementPointsToWinMargin,
+                            onDecrementTap: cubit.decrementPointsToWinMargin,
+                            counter: state.pointsToWinMargin,
                           ),
                         ),
-                      ),
-                    ),
-                    Field(
-                      text: "Name",
-                      icon: Icon(
-                        Icons.local_police_rounded,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: SizedBox(
-                        width: 70,
-                        height: 60,
-                        child: TextField(
-                          controller: secondNameController,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            hintText: "Team 2",
-                          ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
                         ),
-                      ),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                    Field(
-                      text: "Color",
-                      icon: Icon(
-                        Icons.palette,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: ColorPickerWidget(
-                        startColor: Colors.blue,
-                      ),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                    Field(
-                      text: "Points",
-                      icon: Icon(
-                        Icons.emoji_events,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: CounterFromOne(),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          "Appearance",
-                          style: TextStyle(
+                        Field(
+                          text: "Rounds to win",
+                          icon: Icon(
+                            Icons.emoji_events,
+                            size: 25,
                             color: Colors.black,
-                            fontSize: 25,
-                            fontWeight: FontWeight.w900,
+                          ),
+                          widget: CounterFromZero(
+                            onIncrementTap: cubit.incrementRoundsToWin,
+                            onDecrementTap: cubit.decrementRoundsToWin,
+                            counter: state.roundsToWin,
                           ),
                         ),
-                      ),
-                    ),
-                    MyBottomSheetBarAppearance(
-                      child: Field(
-                        text: "Preset colors",
-                        icon: Icon(
-                          Icons.palette,
-                          size: 25,
-                          color: Colors.black,
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
                         ),
-                        widget: Container(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          "Others",
-                          style: TextStyle(
+                        Field(
+                          text: "Increment point  per tap",
+                          icon: Icon(
+                            Icons.add_circle,
+                            size: 25,
                             color: Colors.black,
-                            fontSize: 25,
-                            fontWeight: FontWeight.w900,
+                          ),
+                          widget: CounterFromOne(
+                            onIncrementTap:
+                                cubit.incrementIncrementPointsPerTap,
+                            onDecrementTap:
+                                cubit.decrementIncrementPointsPerTap,
+                            counter: state.incrementPerTap,
                           ),
                         ),
-                      ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
+                        ),
+                        Field(
+                          text: "Timer",
+                          icon: Icon(
+                            Icons.timer,
+                            size: 25,
+                            color: Colors.black,
+                          ),
+                          widget: Container(
+                            width: 90,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: Colors.grey.shade400,
+                                width: 0.8,
+                              ),
+                            ),
+                            child: Center(
+                              child: InkWell(
+                                onTap: () async {
+                                  final result = await showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) => MyTimerBottomBar(),
+                                  );
+
+                                  if (result != null && mounted) {
+                                    cubit.updateTeam1Timer(result);
+                                  }
+                                },
+                                child: Text(
+                                  state.timer,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    Field(
-                      onTap: () {
-                        context.read<UpdateBoolCubit>().updateBool(true);
-                        Navigator.pop(context);
-                      },
-                      text: "How to use",
-                      icon: Icon(
-                        Icons.question_mark,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: Container(),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                    Field(
-                      text: "Rate app",
-                      icon: Icon(
-                        Icons.star,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: Container(),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                    Field(
-                      onTap: () {
-                        const String appLink =
-                            "https://web.telegram.org/k/#@flutternood";
-                        Share.share("Check out this amazing app: $appLink");
-                      },
-                      text: "Share app",
-                      icon: Icon(
-                        Icons.share,
-                        size: 25,
-                        color: Colors.black,
-                      ),
-                      widget: Container(),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 50),
-          ],
+                const SizedBox(height: 15),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              "Team 1",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 25,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Field(
+                          text: "Name",
+                          icon: Icon(
+                            Icons.edit,
+                            size: 25,
+                            color: Colors.black,
+                          ),
+                          widget: SizedBox(
+                            width: 70,
+                            height: 60,
+                            child: TextField(
+                              onChanged: (value) =>
+                                  cubit.updateTeamName(value, 1),
+                              controller: firstNameController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                hintText: "Team 1",
+                              ),
+                            ),
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
+                        ),
+                        Field(
+                          text: "Color",
+                          icon: Icon(
+                            Icons.palette,
+                            size: 25,
+                            color: Colors.black,
+                          ),
+                          widget: ColorPickerWidget(
+                            color: cubit.state.team1Color,
+                            pickerColor: cubit.state.team1Color,
+                            onColorChanged: (value) =>
+                                cubit.updateTeamColor(value, 1),
+                            startColor: cubit.state.team1Color,
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
+                        ),
+                        Field(
+                          text: "Points",
+                          icon: Icon(
+                            Icons.emoji_events,
+                            size: 25,
+                            color: Colors.black,
+                          ),
+                          widget: CounterFromZero(
+                            onIncrementTap: cubit.incrementTeam1Points,
+                            onDecrementTap: cubit.decrementTeam1Points,
+                            counter: cubit.state.team1Points,
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              "Team 2",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 25,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Field(
+                          text: "Name",
+                          icon: Icon(
+                            Icons.local_police_rounded,
+                            size: 25,
+                            color: Colors.black,
+                          ),
+                          widget: SizedBox(
+                            width: 70,
+                            height: 60,
+                            child: TextField(
+                              onChanged: (value) =>
+                                  cubit.updateTeamName(value, 2),
+                              controller: secondNameController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                hintText: "Team 2",
+                              ),
+                            ),
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
+                        ),
+                        Field(
+                          text: "Color",
+                          icon: Icon(
+                            Icons.palette,
+                            size: 25,
+                            color: Colors.black,
+                          ),
+                          widget: ColorPickerWidget(
+                            color: cubit.state.team2Color,
+                            pickerColor: cubit.state.team2Color,
+                            onColorChanged: (value) =>
+                                cubit.updateTeamColor(value, 2),
+                            startColor: cubit.state.team2Color,
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
+                        ),
+                        Field(
+                          text: "Points",
+                          icon: Icon(
+                            Icons.emoji_events,
+                            size: 25,
+                            color: Colors.black,
+                          ),
+                          widget: CounterFromZero(
+                            onIncrementTap: cubit.incrementTeam2Points,
+                            onDecrementTap: cubit.decrementTeam2Points,
+                            counter: cubit.state.team2Points,
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              "Appearance",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 25,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                        ),
+                        MyBottomSheetBarAppearance(
+                          child: Field(
+                            text: "Preset colors",
+                            icon: Icon(
+                              Icons.palette,
+                              size: 25,
+                              color: Colors.black,
+                            ),
+                            widget: Container(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              "Others",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 25,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Field(
+                          onTap: () {
+                            context.read<UpdateBoolCubit>().updateBool(true);
+                            Navigator.pop(context);
+                          },
+                          text: "How to use",
+                          icon: Icon(
+                            Icons.question_mark,
+                            size: 25,
+                            color: Colors.black,
+                          ),
+                          widget: Container(),
+                        ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
+                        ),
+                        Field(
+                          text: "Rate app",
+                          icon: Icon(
+                            Icons.star,
+                            size: 25,
+                            color: Colors.black,
+                          ),
+                          widget: Container(),
+                        ),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
+                        ),
+                        Field(
+                          onTap: () {
+                            const String appLink =
+                                "https://web.telegram.org/k/#@flutternood";
+                            Share.share("Check out this amazing app: $appLink");
+                          },
+                          text: "Share app",
+                          icon: Icon(
+                            Icons.share,
+                            size: 25,
+                            color: Colors.black,
+                          ),
+                          widget: Container(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 50),
+              ],
+            );
+          },
         ),
       ),
     );

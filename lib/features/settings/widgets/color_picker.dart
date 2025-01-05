@@ -1,31 +1,25 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import '../../blocs/settings_cubit/settings_cubit.dart';
 
-class ColorPickerWidget extends StatefulWidget {
+class ColorPickerWidget extends StatelessWidget {
   const ColorPickerWidget({
     super.key,
     required this.startColor,
+    required this.onColorChanged,
+    required this.pickerColor,
+    required this.color,
   });
 
+  final Color color;
   final Color startColor;
-
-  @override
-  State<ColorPickerWidget> createState() => _ColorPickerWidgetState();
-}
-
-class _ColorPickerWidgetState extends State<ColorPickerWidget> {
-  late Color _currentColor;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentColor = widget.startColor;
-  }
+  final void Function(Color) onColorChanged;
+  final Color pickerColor;
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<SettingsCubit>();
     return MaterialButton(
       onPressed: () {
         showDialog(
@@ -35,14 +29,8 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
               title: const Text('Pick a color'),
               content: SingleChildScrollView(
                 child: ColorPicker(
-                  pickerColor: _currentColor,
-                  onColorChanged: (value) {
-                    setState(() {
-                      _currentColor = value;
-                      log("the color is changed");
-                      log(_currentColor.toString());
-                    });
-                  },
+                  pickerColor: pickerColor,
+                  onColorChanged: onColorChanged,
                   pickerAreaHeightPercent: 0.8,
                 ),
               ),
@@ -62,7 +50,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
         width: 30,
         height: 30,
         decoration: BoxDecoration(
-          color: _currentColor,
+          color: color,
           borderRadius: BorderRadius.circular(60),
           border: Border.all(
             color: Colors.black,

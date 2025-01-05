@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:score_counter/features/blocs/settings_cubit/settings_cubit.dart';
 import 'package:score_counter/features/blocs/update_bool_cubit/update_bool_cubit.dart';
 import 'package:score_counter/features/home/widgets/my_confetti.dart';
 import '../widgets/widgets.dart';
@@ -116,7 +117,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<SettingsCubit>();
     return Scaffold(
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     log(cubit.state.isSave.toString());
+      //   },
+      // ),
       body: BlocBuilder<UpdateBoolCubit, bool>(
         builder: (context, state) {
           log(context.read<UpdateBoolCubit>().state.toString());
@@ -273,6 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         top: 45,
                         child: InkWell(
                           onTap: () {
+                            cubit.updateIsSave(false);
                             Navigator.pushNamed(context, "/settings");
                           },
                           child: Image.asset(

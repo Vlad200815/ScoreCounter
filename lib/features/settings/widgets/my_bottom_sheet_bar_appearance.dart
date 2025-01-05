@@ -17,6 +17,7 @@ class _MyBottomSheetBarState extends State<MyBottomSheetBarAppearance> {
 
   @override
   Widget build(BuildContext context) {
+    // final cubit = context.read<SettingsCubit>();
     List<List<Color>> colors = [
       [Colors.lightBlue, Colors.redAccent],
       [Colors.cyan, Colors.greenAccent],
@@ -25,6 +26,7 @@ class _MyBottomSheetBarState extends State<MyBottomSheetBarAppearance> {
       [Colors.pink, Colors.deepPurple],
       [Colors.deepOrange, Colors.cyanAccent],
     ];
+
     return InkWell(
       onTap: () async {
         int? selectedIndex = await showModalBottomSheet<int>(
@@ -136,9 +138,6 @@ class _MyBottomSheetBarState extends State<MyBottomSheetBarAppearance> {
           },
         );
         if (selectedIndex != null) {
-          setState(() {
-            chooseIndex = selectedIndex;
-          });
           print(">>>>>>>>>>>>>>>>>>>Selected Index ==== $selectedIndex");
         }
       },
