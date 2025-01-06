@@ -16,7 +16,7 @@ class SettingsCubit extends Cubit<SettingsState> {
           pointsToWinMargin: 1,
           roundsToWin: 0,
           incrementPerTap: 1,
-          timer: "00:00",
+          timer: "00 : 00",
           //Team 1
           team1Name: "Team 1",
           team1Color: Colors.redAccent,
@@ -25,6 +25,8 @@ class SettingsCubit extends Cubit<SettingsState> {
           team2Name: "Team 2",
           team2Color: Colors.lightBlue,
           team2Points: 0,
+          //Other -> isInstruction
+          isInstruction: false,
         ));
 
   //Is save every setting or not
@@ -82,7 +84,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   void updateTeam1Timer(Map<String, int> result) {
-    String newTeam1Timer = "00:00";
+    String newTeam1Timer = "00 : 00";
     if (result["min"]! < 10 && result["sec"]! < 10) {
       newTeam1Timer = "0${result['min']} : 0${result['sec']}";
     } else if (result["min"]! < 10 && result["sec"]! >= 10) {
@@ -153,7 +155,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         pointsToWinMargin: 1,
         roundsToWin: 0,
         incrementPerTap: 1,
-        timer: "00:00",
+        timer: "00 : 00",
         team1Color: Colors.lightBlue,
         team2Color: Colors.redAccent,
         team1Name: "Team 1",
@@ -162,5 +164,15 @@ class SettingsCubit extends Cubit<SettingsState> {
         team2Points: 0,
       ),
     );
+  }
+
+  //Other -> isInstruction
+  void updateIsInstruction(bool newIsInstruction) {
+    emit(state.copyWith(isInstruction: newIsInstruction));
+  }
+
+  //Functions for home screen which use propertices from this cubit
+  void resetTeamsPoints() {
+    emit(state.copyWith(team1Points: 0, team2Points: 0));
   }
 }

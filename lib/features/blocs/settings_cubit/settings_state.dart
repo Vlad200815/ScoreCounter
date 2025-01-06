@@ -18,6 +18,8 @@ final class SettingsState extends Equatable {
     required this.team2Name,
     required this.team2Color,
     required this.team2Points,
+    //Other -> isInstruction
+    required this.isInstruction,
   });
 
   //isSave
@@ -36,6 +38,8 @@ final class SettingsState extends Equatable {
   final String team2Name;
   final Color team2Color;
   final int team2Points;
+  //Other -> isInstruction
+  final bool isInstruction;
 
   SettingsState copyWith({
     //isSave
@@ -54,6 +58,8 @@ final class SettingsState extends Equatable {
     String? team2Name,
     Color? team2Color,
     int? team2Points,
+    //Other -> isInstruction
+    bool? isInstruction,
   }) {
     return SettingsState(
       //isSave
@@ -72,6 +78,8 @@ final class SettingsState extends Equatable {
       team2Name: team2Name ?? this.team2Name,
       team2Color: team2Color ?? this.team2Color,
       team2Points: team2Points ?? this.team2Points,
+      //Other -> isInstruction
+      isInstruction: isInstruction ?? this.isInstruction,
     );
   }
 
@@ -93,5 +101,7 @@ final class SettingsState extends Equatable {
         team2Name,
         team2Color,
         team2Points,
+        //Other -> isInstruction
+        isInstruction
       ];
 }

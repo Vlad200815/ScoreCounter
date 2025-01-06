@@ -1,9 +1,7 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:score_counter/features/blocs/settings_cubit/settings_cubit.dart';
-import 'package:score_counter/features/blocs/update_bool_cubit/update_bool_cubit.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../home/home.dart';
 import '../widgets/widgets.dart';
@@ -281,11 +279,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: Colors.black,
                           ),
                           widget: ColorPickerWidget(
-                            color: cubit.state.team1Color,
-                            pickerColor: cubit.state.team1Color,
+                            color: state.team1Color,
+                            pickerColor: state.team1Color,
                             onColorChanged: (value) =>
                                 cubit.updateTeamColor(value, 1),
-                            startColor: cubit.state.team1Color,
+                            startColor: state.team1Color,
                           ),
                         ),
                         Divider(
@@ -302,7 +300,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           widget: CounterFromZero(
                             onIncrementTap: cubit.incrementTeam1Points,
                             onDecrementTap: cubit.decrementTeam1Points,
-                            counter: cubit.state.team1Points,
+                            counter: state.team1Points,
                           ),
                         ),
                         Divider(
@@ -372,11 +370,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: Colors.black,
                           ),
                           widget: ColorPickerWidget(
-                            color: cubit.state.team2Color,
-                            pickerColor: cubit.state.team2Color,
+                            color: state.team2Color,
+                            pickerColor: state.team2Color,
                             onColorChanged: (value) =>
                                 cubit.updateTeamColor(value, 2),
-                            startColor: cubit.state.team2Color,
+                            startColor: state.team2Color,
                           ),
                         ),
                         Divider(
@@ -393,7 +391,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           widget: CounterFromZero(
                             onIncrementTap: cubit.incrementTeam2Points,
                             onDecrementTap: cubit.decrementTeam2Points,
-                            counter: cubit.state.team2Points,
+                            counter: state.team2Points,
                           ),
                         ),
                         Divider(
@@ -485,7 +483,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         Field(
                           onTap: () {
-                            context.read<UpdateBoolCubit>().updateBool(true);
+                            context
+                                .read<SettingsCubit>()
+                                .updateIsInstruction(true);
                             Navigator.pop(context);
                           },
                           text: "How to use",

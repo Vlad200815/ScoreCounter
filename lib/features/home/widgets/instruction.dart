@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:score_counter/features/blocs/update_bool_cubit/update_bool_cubit.dart';
+import 'package:score_counter/features/blocs/settings_cubit/settings_cubit.dart';
 
 class Instruction extends StatelessWidget {
   const Instruction({super.key});
@@ -104,7 +104,7 @@ class Instruction extends StatelessWidget {
           SizedBox(height: MediaQuery.of(context).size.width / 30),
           InkWell(
             onTap: () {
-              context.read<UpdateBoolCubit>().updateBool(false);
+              context.read<SettingsCubit>().updateIsInstruction(false);
             },
             child: Align(
               alignment: Alignment.bottomRight,

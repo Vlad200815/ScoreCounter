@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:score_counter/features/blocs/settings_cubit/settings_cubit.dart';
-import 'package:score_counter/features/blocs/update_bool_cubit/update_bool_cubit.dart';
 import 'package:score_counter/features/home/view/home_screen.dart';
 import 'package:score_counter/features/settings/settings.dart';
 import 'package:score_counter/theme/theme.dart';
@@ -11,9 +10,6 @@ void main() {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => UpdateBoolCubit(),
-        ),
         BlocProvider(
           create: (context) => SettingsCubit(),
         ),

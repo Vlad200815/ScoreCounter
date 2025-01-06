@@ -3,8 +3,6 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:score_counter/features/blocs/settings_cubit/settings_cubit.dart';
-import 'package:score_counter/features/blocs/update_bool_cubit/update_bool_cubit.dart';
-import 'package:score_counter/features/home/widgets/my_confetti.dart';
 import '../widgets/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,6 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool isFirstPlayerVictory = false;
   bool isSecondPlayerVictory = false;
+
+  bool isExpandedReset = false;
 
   @override
   void initState() {
@@ -88,16 +88,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _triggerDelayActionOfFirstPlayer() async {
     await Future.delayed(Duration(milliseconds: 2500));
-    setState(() {
-      isFirstPlayerVictory = false;
-    });
+    if (mounted) {
+      setState(() {
+        isFirstPlayerVictory = false;
+      });
+    }
   }
 
   Future<void> _triggerDelayActionOfSecondPlayer() async {
     await Future.delayed(Duration(milliseconds: 2500));
-    setState(() {
-      isSecondPlayerVictory = false;
-    });
+    if (mounted) {
+      setState(() {
+        isSecondPlayerVictory = false;
+      });
+    }
   }
 
   Future<void> isVictoryOrNo() async {
@@ -109,7 +113,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
       _startFirstConfetti();
       await _triggerDelayActionOfFirstPlayer();
-      log("$isFirstPlayerVictory must be false");
     } else if (cubit.state.team2Points > cubit.state.team1Points) {
       setState(() {
         isSecondPlayerVictory = true;
@@ -117,8 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
       _startSecondConfetti();
       await _triggerDelayActionOfSecondPlayer();
-
-      log("$isSecondPlayerVictory must be false");
     }
   }
 
@@ -131,9 +132,8 @@ class _HomeScreenState extends State<HomeScreen> {
       //     log(cubit.state.isSave.toString());
       //   },
       // ),
-      body: BlocBuilder<UpdateBoolCubit, bool>(
+      body: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
-          log(context.read<UpdateBoolCubit>().state.toString());
           return Stack(
             children: [
               LayoutBuilder(
@@ -197,8 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               child: Container(
                                 //TODO: think how to fix the thing with this red colour
-                                color: cubit.state.isSave == true
-                                    ? cubit.state.team1Color
+                                color: state.isSave == true
+                                    ? state.team1Color
                                     : Colors.redAccent,
                                 child: Center(
                                   child: Column(
@@ -207,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        cubit.state.isSave == true
+                                        state.isSave == true
                                             ? cubit.state.team1Name
                                             : firstTeamName,
                                         style: TextStyle(
@@ -218,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       const SizedBox(height: 20),
                                       Text(
-                                        cubit.state.team1Points.toString(),
+                                        state.team1Points.toString(),
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 150,
@@ -307,118 +307,223 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      Positioned(
-                        top: MediaQuery.of(context).size.height / 2 - 75,
-                        left: MediaQuery.of(context).size.width - 65,
-                        child: Container(
-                          height: 150,
-                          width: 65,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.horizontal(
-                              left: Radius.circular(8),
+                      state.roundsToWin == 0
+                          ? Container()
+                          : Positioned(
+                              top: MediaQuery.of(context).size.height / 2 - 75,
+                              left: MediaQuery.of(context).size.width - 65,
+                              child: Container(
+                                height: 150,
+                                width: 65,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.horizontal(
+                                    left: Radius.circular(8),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              firstPlayerWonRounds++;
+                                            });
+                                          },
+                                          child: Text(
+                                            firstPlayerWonRounds.toString(),
+                                            style: TextStyle(
+                                              color: state.team1Color,
+                                              fontSize: 45,
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(
+                                      color: Colors.grey[300],
+                                      height: 1,
+                                    ),
+                                    Expanded(
+                                      child: Center(
+                                        child: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              secondPlayerWonRounds++;
+                                            });
+                                          },
+                                          child: Text(
+                                            secondPlayerWonRounds.toString(),
+                                            style: TextStyle(
+                                              color: state.team2Color,
+                                              fontSize: 45,
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                            color: Colors.white,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: InkWell(
-                                    onTap: () {
+                      cubit.state.timer == "00 : 00"
+                          ? Positioned(
+                              top: MediaQuery.of(context).size.height / 2 - 35,
+                              left: MediaQuery.of(context).size.width / 2 - 35,
+                              child: Material(
+                                color: Colors.transparent,
+                                shape: CircleBorder(),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  onTap: () {
+                                    if (state.roundsToWin >= 1) {
+                                      //TODO: replace setState with cubit
                                       setState(() {
-                                        firstPlayerWonRounds++;
+                                        isExpandedReset = true;
                                       });
-                                    },
-                                    child: Text(
-                                      firstPlayerWonRounds.toString(),
-                                      style: TextStyle(
-                                        color: Colors.lightBlue,
-                                        fontSize: 45,
-                                        fontWeight: FontWeight.w900,
+                                    } else {
+                                      cubit.resetTeamsPoints();
+                                    }
+                                  },
+                                  child: Container(
+                                    width: 70,
+                                    height: 70,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(60),
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.refresh_rounded,
+                                        size: 50,
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              Divider(
-                                color: Colors.grey[300],
-                                height: 1,
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        secondPlayerWonRounds++;
-                                      });
-                                    },
-                                    child: Text(
-                                      secondPlayerWonRounds.toString(),
+                            )
+                          : Positioned(
+                              top: MediaQuery.of(context).size.height / 2 - 30,
+                              left: MediaQuery.of(context).size.width / 2 - 100,
+                              child: Container(
+                                height: 60,
+                                width: 200,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.white,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () =>
+                                          log(isFirstPlayerVictory.toString()),
+                                      icon: Icon(
+                                        Icons.play_arrow_rounded,
+                                        size: 50,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 3),
+                                    Text(
+                                      state.timer,
                                       style: TextStyle(
-                                        color: Colors.redAccent,
-                                        fontSize: 45,
+                                        color: Colors.grey,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.w900,
                                       ),
                                     ),
-                                  ),
+                                    const SizedBox(width: 3),
+                                    IconButton(
+                                      onPressed: () {
+                                        //TODO: replace the setState thing into cubit
+                                        if (state.roundsToWin == 0) {
+                                          cubit.resetTeamsPoints();
+                                        } else {
+                                          setState(() {
+                                            isExpandedReset = true;
+                                          });
+                                        }
+                                      },
+                                      icon: Icon(
+                                        Icons.refresh_rounded,
+                                        size: 40,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: MediaQuery.of(context).size.height / 2 - 30,
-                        left: MediaQuery.of(context).size.width / 2 - 100,
-                        child: Container(
-                          height: 60,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.white,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: () =>
-                                    log(isFirstPlayerVictory.toString()),
-                                icon: Icon(
-                                  Icons.play_arrow_rounded,
-                                  size: 50,
+                            ),
+                      isExpandedReset == true
+                          ? Positioned(
+                              child: Container(
+                                width: 200,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Material(
+                                      child: InkWell(
+                                        onTap: () {
+                                          cubit.resetTeamsPoints();
+                                          setState(() {
+                                            isExpandedReset = false;
+                                          });
+                                        },
+                                        child: Container(
+                                          child: Center(
+                                            child: Text(
+                                              "Reset point",
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(color: Colors.grey),
+                                    Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: () {
+                                          cubit.resetTeamsPoints();
+                                          //TODO: change these round counters on the cubit logic
+                                          setState(() {
+                                            firstPlayerWonRounds = 0;
+                                            secondPlayerWonRounds = 0;
+                                            isExpandedReset = false;
+                                          });
+                                        },
+                                        child: Container(
+                                          child: Center(
+                                            child: Text(
+                                              "Reset match",
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(width: 3),
-                              Text(
-                                "10:02",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                              const SizedBox(width: 3),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    // counter1 = 0;
-                                    // counter2 = 0;
-                                    firstPlayerWonRounds = 0;
-                                    secondPlayerWonRounds = 0;
-                                  });
-                                },
-                                icon: Icon(
-                                  Icons.refresh_rounded,
-                                  size: 40,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                            )
+                          : Container(),
                       Visibility(
                         visible: isFirstPlayerVictory,
                         child: Positioned(
@@ -466,7 +571,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-              state == true ? Instruction() : Container(),
+              state.isInstruction == true ? Instruction() : Container(),
             ],
           );
         },
