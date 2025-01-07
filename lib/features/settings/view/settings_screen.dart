@@ -307,6 +307,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: Colors.grey[300],
                           height: 1,
                         ),
+                        state.roundsToWin >= 1
+                            ? Field(
+                                text: "Rounds",
+                                icon: Icon(
+                                  Icons.add_reaction_sharp,
+                                  size: 25,
+                                  color: Colors.black,
+                                ),
+                                //? Don't forget to create new fuction for it
+                                widget: CounterFromZero(
+                                  onIncrementTap: cubit.incrementTeam1WonRounds,
+                                  onDecrementTap: cubit.decrementTeam1WonRounds,
+                                  counter: state.team1WonRounds,
+                                ),
+                              )
+                            : Container(),
                       ],
                     ),
                   ),
@@ -398,6 +414,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: Colors.grey[300],
                           height: 1,
                         ),
+                        state.roundsToWin >= 1
+                            ? Field(
+                                text: "Rounds",
+                                icon: Icon(
+                                  Icons.add_reaction_sharp,
+                                  size: 25,
+                                  color: Colors.black,
+                                ),
+                                //? Don't forget to create new fuction for it
+                                widget: CounterFromZero(
+                                  onIncrementTap: cubit.incrementTeam2WonRounds,
+                                  onDecrementTap: cubit.decrementTeam2WonRounds,
+                                  counter: state.team2WonRounds,
+                                ),
+                              )
+                            : Container(),
                       ],
                     ),
                   ),

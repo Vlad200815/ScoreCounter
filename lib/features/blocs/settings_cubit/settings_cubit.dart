@@ -21,10 +21,12 @@ class SettingsCubit extends Cubit<SettingsState> {
           team1Name: "Team 1",
           team1Color: Colors.redAccent,
           team1Points: 0,
+          team1WonRounds: 0,
           //Team 2
           team2Name: "Team 2",
           team2Color: Colors.lightBlue,
           team2Points: 0,
+          team2WonRounds: 0,
           //Other -> isInstruction
           isInstruction: false,
         ));
@@ -134,6 +136,18 @@ class SettingsCubit extends Cubit<SettingsState> {
     }
   }
 
+  void incrementTeam1WonRounds() {
+    emit(state.copyWith(team1WonRounds: state.team1WonRounds + 1));
+  }
+
+  void decrementTeam1WonRounds() {
+    if (state.team1WonRounds < 1) {
+      return;
+    } else {
+      emit(state.copyWith(team1WonRounds: state.team1WonRounds - 1));
+    }
+  }
+
   //Team 2's counter functions
   void incrementTeam2Points() {
     emit(state.copyWith(team2Points: state.team2Points + 1));
@@ -144,6 +158,18 @@ class SettingsCubit extends Cubit<SettingsState> {
       return;
     } else {
       emit(state.copyWith(team2Points: state.team2Points - 1));
+    }
+  }
+
+  void incrementTeam2WonRounds() {
+    emit(state.copyWith(team2WonRounds: state.team2WonRounds + 1));
+  }
+
+  void decrementTeam2WonRounds() {
+    if (state.team2WonRounds < 1) {
+      return;
+    } else {
+      emit(state.copyWith(team2WonRounds: state.team2WonRounds - 1));
     }
   }
 
@@ -174,5 +200,14 @@ class SettingsCubit extends Cubit<SettingsState> {
   //Functions for home screen which use propertices from this cubit
   void resetTeamsPoints() {
     emit(state.copyWith(team1Points: 0, team2Points: 0));
+  }
+
+  void resetMatch() {
+    emit(state.copyWith(
+      team1Points: 0,
+      team2Points: 0,
+      team1WonRounds: 0,
+      team2WonRounds: 0,
+    ));
   }
 }

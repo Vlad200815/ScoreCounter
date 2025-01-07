@@ -16,8 +16,8 @@ class _HomeScreenState extends State<HomeScreen> {
   // int counter1 = 0;
   // int counter2 = 0;
 
-  int firstPlayerWonRounds = 0;
-  int secondPlayerWonRounds = 0;
+  // int firstPlayerWonRounds = 0;
+  // int secondPlayerWonRounds = 0;
 
   String firstTeamName = "Team 1";
   String secondTeamName = "Team 2";
@@ -329,12 +329,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Center(
                                         child: InkWell(
                                           onTap: () {
-                                            setState(() {
-                                              firstPlayerWonRounds++;
-                                            });
+                                            // setState(() {
+                                            //   firstPlayerWonRounds++;
+                                            // });
+                                            cubit.incrementTeam1WonRounds();
                                           },
                                           child: Text(
-                                            firstPlayerWonRounds.toString(),
+                                            state.team1WonRounds.toString(),
                                             style: TextStyle(
                                               color: state.team1Color,
                                               fontSize: 45,
@@ -352,12 +353,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Center(
                                         child: InkWell(
                                           onTap: () {
-                                            setState(() {
-                                              secondPlayerWonRounds++;
-                                            });
+                                            cubit.incrementTeam2WonRounds();
                                           },
                                           child: Text(
-                                            secondPlayerWonRounds.toString(),
+                                            state.team2WonRounds.toString(),
                                             style: TextStyle(
                                               color: state.team2Color,
                                               fontSize: 45,
@@ -498,11 +497,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       color: Colors.transparent,
                                       child: InkWell(
                                         onTap: () {
-                                          cubit.resetTeamsPoints();
-                                          //TODO: change these round counters on the cubit logic
+                                          cubit.resetMatch();
                                           setState(() {
-                                            firstPlayerWonRounds = 0;
-                                            secondPlayerWonRounds = 0;
                                             isExpandedReset = false;
                                           });
                                         },

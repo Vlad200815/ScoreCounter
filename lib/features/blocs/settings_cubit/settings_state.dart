@@ -14,10 +14,12 @@ final class SettingsState extends Equatable {
     required this.team1Name,
     required this.team1Color,
     required this.team1Points,
+    required this.team1WonRounds,
     //Team 2
     required this.team2Name,
     required this.team2Color,
     required this.team2Points,
+    required this.team2WonRounds,
     //Other -> isInstruction
     required this.isInstruction,
   });
@@ -34,10 +36,12 @@ final class SettingsState extends Equatable {
   final String team1Name;
   final Color team1Color;
   final int team1Points;
+  final int team1WonRounds;
   //Team 2
   final String team2Name;
   final Color team2Color;
   final int team2Points;
+  final int team2WonRounds;
   //Other -> isInstruction
   final bool isInstruction;
 
@@ -54,10 +58,12 @@ final class SettingsState extends Equatable {
     String? team1Name,
     Color? team1Color,
     int? team1Points,
+    int? team1WonRounds,
     //Team 2
     String? team2Name,
     Color? team2Color,
     int? team2Points,
+    int? team2WonRounds,
     //Other -> isInstruction
     bool? isInstruction,
   }) {
@@ -74,10 +80,12 @@ final class SettingsState extends Equatable {
       team1Name: team1Name ?? this.team1Name,
       team1Color: team1Color ?? this.team1Color,
       team1Points: team1Points ?? this.team1Points,
+      team1WonRounds: team1WonRounds ?? this.team1WonRounds,
       //Team 2
       team2Name: team2Name ?? this.team2Name,
       team2Color: team2Color ?? this.team2Color,
       team2Points: team2Points ?? this.team2Points,
+      team2WonRounds: team2WonRounds ?? this.team2WonRounds,
       //Other -> isInstruction
       isInstruction: isInstruction ?? this.isInstruction,
     );
@@ -97,10 +105,12 @@ final class SettingsState extends Equatable {
         team1Name,
         team1Color,
         team1Points,
+        team1WonRounds,
         //Team 2
         team2Name,
         team2Color,
         team2Points,
+        team2WonRounds,
         //Other -> isInstruction
         isInstruction
       ];
