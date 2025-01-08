@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'settings_state.dart';
 
@@ -27,13 +28,86 @@ class SettingsCubit extends Cubit<SettingsState> {
           team2WonRounds: 0,
           //Other -> isInstruction
           isInstruction: false,
-        ));
+        )) {
+    _loadSettings();
+  }
+
+  //Load settings from SharedPreferences
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Load each setting from SharedPreferences or default value
+    final pointsToWin = prefs.getInt("pointsToWin") ?? 1;
+    final pointsToWinMargin = prefs.getInt("pointsToWinMargin") ?? 1;
+    final roundsToWin = prefs.getInt("roundsToWin") ?? 0;
+    final incrementPerTap = prefs.getInt("incrementsPerTap") ?? 1;
+    final timer = prefs.getString("timer") ?? "00 : 00";
+    final team1Name = prefs.getString("team1Name") ?? "Team 1";
+    final team1Color = prefs.getString("team1Color") ?? "#F44336";
+    final team1Points = prefs.getInt("team1Points") ?? 0;
+    final team1WonRounds = prefs.getInt("team1WonRounds") ?? 0;
+    final team2Name = prefs.getString("team2Name") ?? "Team 2";
+    final team2Color = prefs.getString("team2Color") ?? "#03A9F4";
+    final team2Points = prefs.getInt("team2Points") ?? 0;
+    final team2WonRounds = prefs.getInt("team2WonRounds") ?? 0;
+    final isInstruction = prefs.getBool("isInstruction") ?? false;
+
+    emit(state.copyWith(
+      pointsToWin: pointsToWin,
+      pointsToWinMargin: pointsToWinMargin,
+      roundsToWin: roundsToWin,
+      incrementPerTap: incrementPerTap,
+      team1Name: team1Name,
+      team1Color: _colorFromHex(team1Color),
+      team1Points: team1Points,
+      team1WonRounds: team1WonRounds,
+      team2Name: team2Name,
+      team2Color: _colorFromHex(team2Color),
+      team2Points: team2Points,
+      team2WonRounds: team2WonRounds,
+      isInstruction: isInstruction,
+      timer: timer,
+    ));
+  }
+
+  // Save settings to SharedPreferences
+  Future<void> _saveSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.setInt('pointsToWin', state.pointsToWin);
+    prefs.setInt('pointsToWinMargin', state.pointsToWinMargin);
+    prefs.setInt('roundsToWin', state.roundsToWin);
+    prefs.setInt('incrementPerTap', state.incrementPerTap);
+    prefs.setString('team1Name', state.team1Name);
+    prefs.setString('team1Color', _colorToHex(state.team1Color));
+    prefs.setInt('team1Points', state.team1Points);
+    prefs.setInt('team1WonRounds', state.team1WonRounds);
+    prefs.setString('team2Name', state.team2Name);
+    prefs.setString('team2Color', _colorToHex(state.team2Color));
+    prefs.setInt('team2Points', state.team2Points);
+    prefs.setInt('team2WonRounds', state.team2WonRounds);
+    prefs.setBool('isInstruction', state.isInstruction);
+    prefs.setString('timer', state.timer);
+  }
+
+  // Helper methods to convert Color to Hex and vice versa
+  Color _colorFromHex(String hexColor) {
+    hexColor = hexColor.replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF$hexColor"; // Add alpha if not present
+    }
+    return Color(int.parse(hexColor, radix: 16));
+  }
+
+  String _colorToHex(Color color) {
+    return "#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}";
+  }
 
   //Match settins
   void incrementPointsToWin() {
     emit(
       state.copyWith(pointsToWin: state.pointsToWin + 1),
     );
+    _saveSettings();
   }
 
   void decrementPointsToWin() {
@@ -41,11 +115,13 @@ class SettingsCubit extends Cubit<SettingsState> {
       return;
     } else {
       emit(state.copyWith(pointsToWin: state.pointsToWin - 1));
+      _saveSettings();
     }
   }
 
   void incrementPointsToWinMargin() {
     emit(state.copyWith(pointsToWinMargin: state.pointsToWinMargin + 1));
+    _saveSettings();
   }
 
   void decrementPointsToWinMargin() {
@@ -53,11 +129,13 @@ class SettingsCubit extends Cubit<SettingsState> {
       return;
     } else {
       emit(state.copyWith(pointsToWinMargin: state.pointsToWinMargin - 1));
+      _saveSettings();
     }
   }
 
   void incrementRoundsToWin() {
     emit(state.copyWith(roundsToWin: state.roundsToWin + 1));
+    _saveSettings();
   }
 
   void decrementRoundsToWin() {
@@ -65,11 +143,13 @@ class SettingsCubit extends Cubit<SettingsState> {
       return;
     } else {
       emit(state.copyWith(roundsToWin: state.roundsToWin - 1));
+      _saveSettings();
     }
   }
 
   void incrementIncrementPointsPerTap() {
     emit(state.copyWith(incrementPerTap: state.incrementPerTap + 1));
+    _saveSettings();
   }
 
   void decrementIncrementPointsPerTap() {
@@ -77,6 +157,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       return;
     } else {
       emit(state.copyWith(incrementPerTap: state.incrementPerTap - 1));
+      _saveSettings();
     }
   }
 
@@ -93,14 +174,17 @@ class SettingsCubit extends Cubit<SettingsState> {
     }
     log("newTime: $newTeam1Timer");
     emit(state.copyWith(timer: newTeam1Timer));
+    _saveSettings();
   }
 
   //Functions for the teams
   void updateTeamName(String newName, int whatTeam) {
     if (whatTeam == 1) {
       emit(state.copyWith(team1Name: newName));
+      _saveSettings();
     } else if (whatTeam == 2) {
       emit(state.copyWith(team2Name: newName));
+      _saveSettings();
     } else {
       return;
     }
@@ -110,9 +194,11 @@ class SettingsCubit extends Cubit<SettingsState> {
     if (whatTeam == 1) {
       emit(state.copyWith(team1Color: newColor));
       log("1 Color is changed");
+      _saveSettings();
     } else if (whatTeam == 2) {
       emit(state.copyWith(team2Color: newColor));
       log("2 Color is changed");
+      _saveSettings();
     } else {
       return;
     }
@@ -122,6 +208,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   void incrementTeam1Points() {
     emit(
         state.copyWith(team1Points: state.team1Points + state.incrementPerTap));
+    _saveSettings();
   }
 
   void decrementTeam1Points() {
@@ -130,6 +217,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     } else {
       emit(state.copyWith(
           team1Points: state.team1Points - state.incrementPerTap));
+      _saveSettings();
     }
   }
 
@@ -138,6 +226,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       return;
     } else {
       emit(state.copyWith(team1WonRounds: state.team1WonRounds + 1));
+      _saveSettings();
     }
   }
 
@@ -146,6 +235,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       return;
     } else {
       emit(state.copyWith(team1WonRounds: state.team1WonRounds - 1));
+      _saveSettings();
     }
   }
 
@@ -153,6 +243,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   void incrementTeam2Points() {
     emit(
         state.copyWith(team2Points: state.team2Points + state.incrementPerTap));
+    _saveSettings();
   }
 
   void decrementTeam2Points() {
@@ -161,6 +252,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     } else {
       emit(state.copyWith(
           team2Points: state.team2Points - state.incrementPerTap));
+      _saveSettings();
     }
   }
 
@@ -169,6 +261,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       return;
     } else {
       emit(state.copyWith(team2WonRounds: state.team2WonRounds + 1));
+      _saveSettings();
     }
   }
 
@@ -177,6 +270,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       return;
     } else {
       emit(state.copyWith(team2WonRounds: state.team2WonRounds - 1));
+      _saveSettings();
     }
   }
 
@@ -197,16 +291,19 @@ class SettingsCubit extends Cubit<SettingsState> {
         team2Points: 0,
       ),
     );
+    _saveSettings();
   }
 
   //Other -> isInstruction
   void updateIsInstruction(bool newIsInstruction) {
     emit(state.copyWith(isInstruction: newIsInstruction));
+    _saveSettings();
   }
 
   //Functions for home screen which use propertices from this cubit
   void resetTeamsPoints() {
     emit(state.copyWith(team1Points: 0, team2Points: 0));
+    _saveSettings();
   }
 
   void resetMatch() {
@@ -216,5 +313,6 @@ class SettingsCubit extends Cubit<SettingsState> {
       team1WonRounds: 0,
       team2WonRounds: 0,
     ));
+    _saveSettings();
   }
 }

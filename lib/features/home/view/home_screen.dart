@@ -39,17 +39,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _confettiController1 =
-        ConfettiController(duration: Duration(milliseconds: 40));
-    _confettiController2 =
-        ConfettiController(duration: Duration(milliseconds: 40));
+    _confettiController1 = ConfettiController(
+      duration: Duration(
+        milliseconds: 40,
+      ),
+    );
+    _confettiController2 = ConfettiController(
+      duration: Duration(
+        milliseconds: 40,
+      ),
+    );
   }
 
   @override
   void dispose() {
     super.dispose();
-    _confettiController1.dispose();
-    _confettiController2.dispose();
   }
 
   //Functions for adding and subtracting the count
