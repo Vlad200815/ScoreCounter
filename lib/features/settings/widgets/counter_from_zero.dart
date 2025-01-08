@@ -6,11 +6,15 @@ class CounterFromZero extends StatefulWidget {
     required this.onIncrementTap,
     required this.onDecrementTap,
     required this.counter,
+    required this.addColor,
+    required this.addBorderColor,
   });
 
   final void Function()? onIncrementTap;
   final void Function()? onDecrementTap;
   final int counter;
+  final Color? addColor;
+  final Color? addBorderColor;
 
   @override
   State<CounterFromZero> createState() => _CounterFromZeroState();
@@ -25,13 +29,6 @@ class _CounterFromZeroState extends State<CounterFromZero> {
         children: [
           InkWell(
             onTap: widget.onDecrementTap,
-            // if (counter < 1) {
-            //     return;
-            //   } else {
-            //     setState(() {
-            //       counter--;
-            //     });
-            //   }
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
@@ -65,12 +62,12 @@ class _CounterFromZeroState extends State<CounterFromZero> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(
-                  color: Colors.grey,
+                  color: widget.addBorderColor!,
                 ),
               ),
               child: Icon(
                 Icons.add,
-                color: Colors.blue,
+                color: widget.addColor,
                 size: 25,
               ),
             ),

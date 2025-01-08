@@ -2,8 +2,6 @@ part of 'settings_cubit.dart';
 
 final class SettingsState extends Equatable {
   const SettingsState({
-    //isSave
-    required this.isSave,
     //Match Settings
     required this.pointsToWin,
     required this.pointsToWinMargin,
@@ -24,8 +22,6 @@ final class SettingsState extends Equatable {
     required this.isInstruction,
   });
 
-  //isSave
-  final bool isSave;
   //Match settings
   final int pointsToWin;
   final int pointsToWinMargin;
@@ -46,8 +42,6 @@ final class SettingsState extends Equatable {
   final bool isInstruction;
 
   SettingsState copyWith({
-    //isSave
-    bool? isSave,
     //Match settings
     int? pointsToWin,
     int? pointsToWinMargin,
@@ -68,8 +62,6 @@ final class SettingsState extends Equatable {
     bool? isInstruction,
   }) {
     return SettingsState(
-      //isSave
-      isSave: isSave ?? this.isSave,
       //Match settings
       pointsToWin: pointsToWin ?? this.pointsToWin,
       pointsToWinMargin: pointsToWinMargin ?? this.pointsToWinMargin,
@@ -93,8 +85,6 @@ final class SettingsState extends Equatable {
 
   @override
   List<Object> get props => [
-        //isSave
-        isSave,
         //Match settings
         pointsToWin,
         pointsToWinMargin,

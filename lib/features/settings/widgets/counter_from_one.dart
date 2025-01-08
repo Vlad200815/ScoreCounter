@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:score_counter/features/blocs/settings_cubit/settings_cubit.dart';
 
 class CounterFromOne extends StatefulWidget {
   const CounterFromOne({
@@ -19,19 +21,14 @@ class CounterFromOne extends StatefulWidget {
 class _CounterFromOneState extends State<CounterFromOne> {
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<SettingsCubit>();
+
     return SizedBox(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           InkWell(
             onTap: widget.onDecrementTap,
-            // if (counter < 2) {
-            //     return;
-            //   } else {
-            //     setState(() {
-            //       counter--;
-            //     });
-            //   }
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),

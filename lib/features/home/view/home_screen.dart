@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
@@ -13,15 +14,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // int counter1 = 0;
-  // int counter2 = 0;
-
-  // int firstPlayerWonRounds = 0;
-  // int secondPlayerWonRounds = 0;
-
-  String firstTeamName = "Team 1";
-  String secondTeamName = "Team 2";
-
   Offset? _startVerticalDragDetails;
 
   late ConfettiController _confettiController1;
@@ -32,13 +24,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool isExpandedReset = false;
 
+  //for timerCountDown
+  Timer? timer;
+  int mins = 0;
+  int secs = 0;
+  String secText = "";
+  String minText = "";
+
+  bool isStarted = false;
+  bool isBeginning = false;
+  bool isTimeUp = false;
+  bool isResume = false;
+
   @override
   void initState() {
     super.initState();
     _confettiController1 =
-        ConfettiController(duration: Duration(microseconds: 40));
+        ConfettiController(duration: Duration(milliseconds: 40));
     _confettiController2 =
-        ConfettiController(duration: Duration(microseconds: 40));
+        ConfettiController(duration: Duration(milliseconds: 40));
   }
 
   @override
@@ -48,18 +52,13 @@ class _HomeScreenState extends State<HomeScreen> {
     _confettiController2.dispose();
   }
 
+  //Functions for adding and subtracting the count
   void increaceCounters(int counterIndex, BuildContext context) {
     final cubit = context.read<SettingsCubit>();
     if (counterIndex == 1) {
-      // setState(() {
-      //   counter1++;
-      // });
       cubit.incrementTeam1Points();
     } else {
       cubit.incrementTeam2Points();
-      // setState(() {
-      //   counter2++;
-      // });
     }
   }
 
@@ -67,17 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final cubit = context.read<SettingsCubit>();
     if (counterIndex == 1) {
       cubit.decrementTeam1Points();
-      // setState(() {
-      //   counter1--;
-      // });
     } else {
       cubit.decrementTeam2Points();
-      // setState(() {
-      //   counter2--;
-      // });
     }
   }
 
+  //Function for starting confetti
   void _startFirstConfetti() {
     _confettiController1.play();
   }
@@ -86,40 +80,80 @@ class _HomeScreenState extends State<HomeScreen> {
     _confettiController2.play();
   }
 
-  Future<void> _triggerDelayActionOfFirstPlayer() async {
-    await Future.delayed(Duration(milliseconds: 2500));
-    if (mounted) {
-      setState(() {
-        isFirstPlayerVictory = false;
-      });
-    }
-  }
-
-  Future<void> _triggerDelayActionOfSecondPlayer() async {
-    await Future.delayed(Duration(milliseconds: 2500));
-    if (mounted) {
-      setState(() {
-        isSecondPlayerVictory = false;
-      });
-    }
-  }
-
-  Future<void> isVictoryOrNo() async {
+  void _startCountDown(BuildContext context) {
     final cubit = context.read<SettingsCubit>();
-    if (cubit.state.team1Points > cubit.state.team2Points) {
-      setState(() {
-        isFirstPlayerVictory = true;
-      });
+    if (!isResume) {
+      String time = cubit.state.timer;
 
-      _startFirstConfetti();
-      await _triggerDelayActionOfFirstPlayer();
-    } else if (cubit.state.team2Points > cubit.state.team1Points) {
-      setState(() {
-        isSecondPlayerVictory = true;
-      });
+      List<String> myList = time.split('');
 
-      _startSecondConfetti();
-      await _triggerDelayActionOfSecondPlayer();
+      if (myList[0] == "0") {
+        mins = int.parse(myList[1]);
+        minText = "0${myList[1]}";
+      } else {
+        String fullMin = "${myList[0]}${myList[1]}";
+        mins = int.parse(fullMin);
+        minText = fullMin;
+      }
+
+      if (myList[6] == "0") {
+        secs = int.parse(myList[1]);
+      } else {
+        String fullSec = "${myList[5]}${myList[6]}";
+        secs = int.parse(fullSec);
+      }
+    }
+
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        setState(() {
+          isStarted = true;
+          //new
+          isBeginning = true;
+          if (secs == 0 && mins == 0) {
+            isStarted = false;
+            timer.cancel();
+            //new
+            isTimeUp = true;
+          } else if (secs == 0) {
+            if (mins > 0) {
+              mins--;
+              secs = 59;
+            }
+            minText = mins < 10 ? "0$mins" : "$mins";
+            secText = "59";
+          } else {
+            secs--;
+            secText = secs < 10 ? "0$secs" : "$secs";
+          }
+        });
+      },
+    );
+  }
+
+  void isVictoryOrNo() {
+    final cubit = context.read<SettingsCubit>();
+
+    if (cubit.state.team1Points >= cubit.state.pointsToWin ||
+        cubit.state.team2Points >= cubit.state.pointsToWin) {
+      if (cubit.state.team1Points >
+          cubit.state.pointsToWinMargin - 1 + cubit.state.team2Points) {
+        setState(() {
+          isSecondPlayerVictory = false;
+          isFirstPlayerVictory = true;
+        });
+
+        _startFirstConfetti();
+      } else if (cubit.state.team2Points >
+          cubit.state.pointsToWinMargin - 1 + cubit.state.team1Points) {
+        setState(() {
+          isFirstPlayerVictory = false;
+          isSecondPlayerVictory = true;
+        });
+
+        _startSecondConfetti();
+      }
     }
   }
 
@@ -127,11 +161,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit>();
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     log(cubit.state.isSave.toString());
-      //   },
-      // ),
       body: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
           return Stack(
@@ -140,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, constraints) {
                   final textPainter1 = TextPainter(
                     text: TextSpan(
-                      text: firstTeamName,
+                      text: state.team1Name,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 50,
@@ -156,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   final textPainter2 = TextPainter(
                     text: TextSpan(
-                      text: secondTeamName,
+                      text: state.team2Name,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 50,
@@ -181,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 _startVerticalDragDetails =
                                     details.globalPosition;
                               },
-                              onVerticalDragEnd: (details) async {
+                              onVerticalDragEnd: (details) {
                                 if (_startVerticalDragDetails != null) {
                                   final double verticalDistance =
                                       details.velocity.pixelsPerSecond.dy;
@@ -192,14 +221,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     increaceCounters(1, context);
                                   }
                                 }
-                                //TODO: imporove victory logic here
-                                await isVictoryOrNo();
+
+                                isVictoryOrNo();
                               },
                               child: Container(
-                                //TODO: think how to fix the thing with this red colour
-                                color: state.isSave == true
-                                    ? state.team1Color
-                                    : Colors.redAccent,
+                                color: state.team1Color,
                                 child: Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -207,9 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        state.isSave == true
-                                            ? cubit.state.team1Name
-                                            : firstTeamName,
+                                        cubit.state.team1Name,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 50,
@@ -241,7 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 _startVerticalDragDetails =
                                     details.globalPosition;
                               },
-                              onVerticalDragEnd: (details) async {
+                              onVerticalDragEnd: (details) {
                                 if (_startVerticalDragDetails != null) {
                                   final double verticalDistance =
                                       details.velocity.pixelsPerSecond.dy;
@@ -251,14 +275,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     increaceCounters(2, context);
                                   }
                                 }
-                                //TODO: imporove victory logic here
-                                await isVictoryOrNo();
+                                isVictoryOrNo();
                               },
                               child: Container(
-                                //TODO: the same thing with color which is located a bit higher
-                                color: cubit.state.isSave == true
-                                    ? cubit.state.team2Color
-                                    : Colors.lightBlue,
+                                color: cubit.state.team2Color,
                                 child: Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -266,9 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        cubit.state.isSave == true
-                                            ? cubit.state.team2Name
-                                            : secondTeamName,
+                                        cubit.state.team2Name,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 50,
@@ -297,7 +315,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         top: 45,
                         child: InkWell(
                           onTap: () {
-                            cubit.updateIsSave(false);
                             Navigator.pushNamed(context, "/settings");
                           },
                           child: Image.asset(
@@ -329,10 +346,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Center(
                                         child: InkWell(
                                           onTap: () {
-                                            // setState(() {
-                                            //   firstPlayerWonRounds++;
-                                            // });
-                                            cubit.incrementTeam1WonRounds();
+                                            if (state.roundsToWin ==
+                                                state.team1WonRounds) {
+                                              return;
+                                            } else {
+                                              cubit.incrementTeam1WonRounds();
+                                            }
                                           },
                                           child: Text(
                                             state.team1WonRounds.toString(),
@@ -353,7 +372,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Center(
                                         child: InkWell(
                                           onTap: () {
-                                            cubit.incrementTeam2WonRounds();
+                                            if (state.roundsToWin ==
+                                                state.team2WonRounds) {
+                                              return;
+                                            } else {
+                                              cubit.incrementTeam2WonRounds();
+                                            }
                                           },
                                           child: Text(
                                             state.team2WonRounds.toString(),
@@ -380,14 +404,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(20),
                                   onTap: () {
-                                    if (state.roundsToWin >= 1) {
-                                      //TODO: replace setState with cubit
-                                      setState(() {
+                                    setState(() {
+                                      if (state.roundsToWin >= 1) {
                                         isExpandedReset = true;
-                                      });
-                                    } else {
-                                      cubit.resetTeamsPoints();
-                                    }
+                                        isFirstPlayerVictory = false;
+                                        isSecondPlayerVictory = false;
+                                      } else {
+                                        cubit.resetTeamsPoints();
+                                        isFirstPlayerVictory = false;
+                                        isSecondPlayerVictory = false;
+                                      }
+                                    });
                                   },
                                   child: Container(
                                     width: 70,
@@ -420,34 +447,68 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    IconButton(
-                                      onPressed: () =>
-                                          log(isFirstPlayerVictory.toString()),
-                                      icon: Icon(
-                                        Icons.play_arrow_rounded,
-                                        size: 50,
-                                      ),
-                                    ),
+                                    isStarted == false
+                                        ? IconButton(
+                                            onPressed: () {
+                                              if (isTimeUp) {
+                                                return;
+                                              } else {
+                                                _startCountDown(context);
+                                              }
+                                            },
+                                            icon: Icon(
+                                              Icons.play_arrow_rounded,
+                                              size: 50,
+                                            ),
+                                          )
+                                        : IconButton(
+                                            onPressed: () {
+                                              timer!.cancel();
+                                              setState(() {
+                                                isStarted = false;
+                                                isResume = true;
+                                              });
+                                            },
+                                            icon: Icon(
+                                              Icons.pause,
+                                              size: 40,
+                                              color: Colors.black,
+                                            ),
+                                          ),
                                     const SizedBox(width: 3),
                                     Text(
-                                      state.timer,
+                                      isBeginning == false
+                                          ? state.timer
+                                          : isTimeUp
+                                              ? "TIME UP"
+                                              : "$minText : $secText",
                                       style: TextStyle(
                                         color: Colors.grey,
-                                        fontSize: 20,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w900,
                                       ),
                                     ),
                                     const SizedBox(width: 3),
                                     IconButton(
                                       onPressed: () {
-                                        //TODO: replace the setState thing into cubit
-                                        if (state.roundsToWin == 0) {
-                                          cubit.resetTeamsPoints();
-                                        } else {
-                                          setState(() {
+                                        setState(() {
+                                          isTimeUp = false;
+                                          isResume = false;
+                                          isBeginning = false;
+                                          log("that's it");
+                                          log(state.timer);
+                                          _startCountDown;
+
+                                          if (state.roundsToWin == 0) {
+                                            cubit.resetTeamsPoints();
+                                            isFirstPlayerVictory = false;
+                                            isSecondPlayerVictory = false;
+                                          } else {
                                             isExpandedReset = true;
-                                          });
-                                        }
+                                            isFirstPlayerVictory = false;
+                                            isSecondPlayerVictory = false;
+                                          }
+                                        });
                                       },
                                       icon: Icon(
                                         Icons.refresh_rounded,
@@ -472,14 +533,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Material(
+                                      color: Colors.transparent,
                                       child: InkWell(
                                         onTap: () {
                                           cubit.resetTeamsPoints();
                                           setState(() {
                                             isExpandedReset = false;
+                                            isTimeUp = false;
+                                            isResume = false;
+                                            isBeginning = false;
+                                            _startCountDown;
                                           });
                                         },
                                         child: Container(
+                                          color: Colors.transparent,
                                           child: Center(
                                             child: Text(
                                               "Reset point",
@@ -500,9 +567,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                           cubit.resetMatch();
                                           setState(() {
                                             isExpandedReset = false;
+
+                                            isTimeUp = false;
+
+                                            isResume = false;
+                                            isBeginning = false;
+
+                                            _startCountDown;
                                           });
                                         },
                                         child: Container(
+                                          color: Colors.transparent,
                                           child: Center(
                                             child: Text(
                                               "Reset match",
@@ -549,20 +624,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      Positioned(
-                        top: MediaQuery.of(context).size.width / 2.2,
-                        left: MediaQuery.of(context).size.width / 2,
-                        child: MyConfetti(
-                          confettiController: _confettiController1,
-                        ),
-                      ),
-                      Positioned(
-                        top: MediaQuery.of(context).size.height / 1.4,
-                        left: MediaQuery.of(context).size.width / 2,
-                        child: MyConfetti(
-                          confettiController: _confettiController2,
-                        ),
-                      ),
+                      // Positioned(
+                      //   top: MediaQuery.of(context).size.width / 2.2,
+                      //   left: MediaQuery.of(context).size.width / 2,
+                      //   child: MyConfetti(
+                      //     confettiController: _confettiController1,
+                      //   ),
+                      // ),
+                      // Positioned(
+                      //   top: MediaQuery.of(context).size.height / 1.4,
+                      //   left: MediaQuery.of(context).size.width / 2,
+                      //   child: MyConfetti(
+                      //     confettiController: _confettiController2,
+                      //   ),
+                      // ),
                     ],
                   );
                 },

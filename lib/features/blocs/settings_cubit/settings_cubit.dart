@@ -9,8 +9,6 @@ part 'settings_state.dart';
 class SettingsCubit extends Cubit<SettingsState> {
   SettingsCubit()
       : super(const SettingsState(
-          //Is Sace these settings or not
-          isSave: false,
           //Match settings
           pointsToWin: 1,
           pointsToWinMargin: 1,
@@ -31,14 +29,11 @@ class SettingsCubit extends Cubit<SettingsState> {
           isInstruction: false,
         ));
 
-  //Is save every setting or not
-  void updateIsSave(bool newIsSave) {
-    emit(state.copyWith(isSave: newIsSave));
-  }
-
   //Match settins
   void incrementPointsToWin() {
-    emit(state.copyWith(pointsToWin: state.pointsToWin + 1));
+    emit(
+      state.copyWith(pointsToWin: state.pointsToWin + 1),
+    );
   }
 
   void decrementPointsToWin() {
@@ -85,7 +80,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     }
   }
 
-  void updateTeam1Timer(Map<String, int> result) {
+  void updateTimer(Map<String, int> result) {
     String newTeam1Timer = "00 : 00";
     if (result["min"]! < 10 && result["sec"]! < 10) {
       newTeam1Timer = "0${result['min']} : 0${result['sec']}";
@@ -125,19 +120,25 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   //Team 1's counter functions
   void incrementTeam1Points() {
-    emit(state.copyWith(team1Points: state.team1Points + 1));
+    emit(
+        state.copyWith(team1Points: state.team1Points + state.incrementPerTap));
   }
 
   void decrementTeam1Points() {
     if (state.team1Points < 1) {
       return;
     } else {
-      emit(state.copyWith(team1Points: state.team1Points - 1));
+      emit(state.copyWith(
+          team1Points: state.team1Points - state.incrementPerTap));
     }
   }
 
   void incrementTeam1WonRounds() {
-    emit(state.copyWith(team1WonRounds: state.team1WonRounds + 1));
+    if (state.roundsToWin == state.team1WonRounds) {
+      return;
+    } else {
+      emit(state.copyWith(team1WonRounds: state.team1WonRounds + 1));
+    }
   }
 
   void decrementTeam1WonRounds() {
@@ -150,19 +151,25 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   //Team 2's counter functions
   void incrementTeam2Points() {
-    emit(state.copyWith(team2Points: state.team2Points + 1));
+    emit(
+        state.copyWith(team2Points: state.team2Points + state.incrementPerTap));
   }
 
   void decrementTeam2Points() {
     if (state.team2Points < 1) {
       return;
     } else {
-      emit(state.copyWith(team2Points: state.team2Points - 1));
+      emit(state.copyWith(
+          team2Points: state.team2Points - state.incrementPerTap));
     }
   }
 
   void incrementTeam2WonRounds() {
-    emit(state.copyWith(team2WonRounds: state.team2WonRounds + 1));
+    if (state.roundsToWin == state.team2WonRounds) {
+      return;
+    } else {
+      emit(state.copyWith(team2WonRounds: state.team2WonRounds + 1));
+    }
   }
 
   void decrementTeam2WonRounds() {

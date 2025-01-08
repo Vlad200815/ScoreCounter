@@ -21,15 +21,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     TextEditingController secondNameController = TextEditingController();
 
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     log(cubit.state.isSave.toString());
-      //   },
-      //   backgroundColor: cubit.state.team1Color,
-      //   child: Icon(
-      //     Icons.question_mark_rounded,
-      //   ),
-      // ),
       backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
         child: BlocBuilder<SettingsCubit, SettingsState>(
@@ -51,29 +42,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           );
                         },
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
+                        child: Material(
+                          color: Colors.grey[200],
+                          child: Container(
+                            color: Colors.grey[200],
+                            child: Text(
+                              "Save",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          cubit.updateIsSave(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomeScreen(),
-                            ),
-                          );
+                      TextButton(
+                        onPressed: () {
+                          cubit.resetAllSettings();
                         },
                         child: Text(
-                          "Save",
+                          "Reset Settings",
                           style: TextStyle(
-                            color: Colors.blue,
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
                           ),
@@ -83,7 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
@@ -147,6 +137,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: Colors.black,
                           ),
                           widget: CounterFromZero(
+                            addBorderColor: Colors.grey,
+                            addColor: Colors.blue,
                             onIncrementTap: cubit.incrementRoundsToWin,
                             onDecrementTap: cubit.decrementRoundsToWin,
                             counter: state.roundsToWin,
@@ -201,7 +193,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   );
 
                                   if (result != null && mounted) {
-                                    cubit.updateTeam1Timer(result);
+                                    cubit.updateTimer(result);
                                   }
                                 },
                                 child: Text(
@@ -298,6 +290,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: Colors.black,
                           ),
                           widget: CounterFromZero(
+                            addBorderColor: Colors.grey,
+                            addColor: Colors.blue,
                             onIncrementTap: cubit.incrementTeam1Points,
                             onDecrementTap: cubit.decrementTeam1Points,
                             counter: state.team1Points,
@@ -315,8 +309,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   size: 25,
                                   color: Colors.black,
                                 ),
-                                //? Don't forget to create new fuction for it
                                 widget: CounterFromZero(
+                                  addBorderColor:
+                                      state.roundsToWin <= state.team1WonRounds
+                                          ? Colors.grey[300]
+                                          : Colors.grey,
+                                  addColor:
+                                      state.roundsToWin <= state.team1WonRounds
+                                          ? Colors.blue[300]
+                                          : Colors.blue,
                                   onIncrementTap: cubit.incrementTeam1WonRounds,
                                   onDecrementTap: cubit.decrementTeam1WonRounds,
                                   counter: state.team1WonRounds,
@@ -405,6 +406,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: Colors.black,
                           ),
                           widget: CounterFromZero(
+                            addBorderColor: Colors.grey,
+                            addColor: Colors.blue,
                             onIncrementTap: cubit.incrementTeam2Points,
                             onDecrementTap: cubit.decrementTeam2Points,
                             counter: state.team2Points,
@@ -422,8 +425,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   size: 25,
                                   color: Colors.black,
                                 ),
-                                //? Don't forget to create new fuction for it
                                 widget: CounterFromZero(
+                                  addBorderColor:
+                                      state.roundsToWin <= state.team2WonRounds
+                                          ? Colors.grey[300]
+                                          : Colors.grey,
+                                  addColor:
+                                      state.roundsToWin <= state.team2WonRounds
+                                          ? Colors.blue[300]
+                                          : Colors.blue,
                                   onIncrementTap: cubit.incrementTeam2WonRounds,
                                   onDecrementTap: cubit.decrementTeam2WonRounds,
                                   counter: state.team2WonRounds,
@@ -496,22 +506,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             ),
                           ),
-                        ),
-                        Field(
-                          onTap: () {
-                            cubit.resetAllSettings();
-                          },
-                          text: "Reset all settings",
-                          icon: Icon(
-                            Icons.restore_page_outlined,
-                            size: 25,
-                            color: Colors.black,
-                          ),
-                          widget: Container(),
-                        ),
-                        Divider(
-                          color: Colors.grey[300],
-                          height: 1,
                         ),
                         Field(
                           onTap: () {
