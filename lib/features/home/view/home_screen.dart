@@ -165,6 +165,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit>();
     return Scaffold(
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+
+      //   },
+      //   child: Icon(
+      //     Icons.add,
+      //   ),
+      // ),
       body: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
           return Stack(
